@@ -26,9 +26,6 @@ function ctrl_c(){
 
 function showhelp(){
 	echo -e "\n${yellowColour}[*]${endColour}${grayColour} Menú de ayuda ${endColour}\n"
-	#echo -e "\t${grayColour} -f: Información del dominio via web (bajo demanda) ${endColour}\n"
-	#echo -e "\t${grayColour} -h: Muestra este menu de ayuda ${endColour}\n"
-	#echo -e "\t${grayColour} -d: Indica el dominio objetivo ${endColour}\n"
 	echo -e "${yellowColour}[*]${endColour}${grayColour} Ejemplo de uso: bash install.sh ${endColour}\n"
 	exit 0
 }

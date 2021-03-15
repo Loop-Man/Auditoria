@@ -1,7 +1,7 @@
 #!/bin/bash
 #author		: Manuel López Torrecillas
 #description: Script para recopilación de información pasiva del activo.
-#use: bash footprinting-SubDomain.sh $domain
+#use: bash footprinting.sh $domain
 
 #Colours
 greenColour="\e[0;32m\033[1m"
@@ -29,9 +29,17 @@ function showhelp(){
 	#echo -e "\t${grayColour} -f: Información del dominio via web (bajo demanda) ${endColour}\n"
 	#echo -e "\t${grayColour} -h: Muestra este menu de ayuda ${endColour}\n"
 	#echo -e "\t${grayColour} -d: Indica el dominio objetivo ${endColour}\n"
-	echo -e "${yellowColour}[*]${endColour}${grayColour} Ejemplo de uso: bash footprinting-Domain.sh domain.com ${endColour}\n"
+	echo -e "${yellowColour}[*]${endColour}${grayColour} Ejemplo de uso: bash footprinting.sh www.example.com ${endColour}\n"
 	exit 0
 }
+
+# Fijamos los parámetros de entrada del script a 1.
+let numarg=$(echo $#)
+let totalarg=1
+if [ $numarg -ne $totalarg ];then
+    showhelp
+    exit
+fi
 
 #Definimos variables globales del script
 domain=$1
@@ -225,6 +233,8 @@ assetfinder --subs-only $topdomain > "$location/$domain/subdomain.tmp"
 amass enum -d $topdomain >> "$location/$domain/subdomain.tmp"
 findomain-linux -q -t $topdomain >> "$location/$domain/subdomain.tmp"
 subfinder -d $topdomain --silent >> "$location/$domain/subdomain.tmp"
+curl -s "https://sonar.omnisint.io/subdomains/$topdomain" | jq '.[]' | tr -d '"' >> "$location/$domain/subdomain.tmp"
+curl -s "https://dns.bufferover.run/dns?q=$topdomain" | grep -i "\.$topdomain" | cut -d ',' -f2 | tr -d '"' | sort -u >> "$location/$domain/subdomain.tmp"
 cat "$location/$domain/waybackdataDomain.txt" | sed 's/\/\//\//g' | cut -d '/' -f 2 | cut -d ':' -f 1 | sort -u >> "$location/$domain/subdomain.tmp"
 
 
@@ -247,8 +257,8 @@ fi
 cat "$location/$domain/subdomain-final.txt" | httprobe -s -p https:443 | sed 's/https\?:\/\///' | tr -d ':443' | tee -a "$location/$domain/subdomain-alive443.txt"
 cat "$location/$domain/subdomain-final.txt" | httprobe -s -p http:80 | sed 's/http\?:\/\///' | tr -d ':80' | tee -a "$location/$domain/subdomain-alive80.txt"
 
-cat "$location/$domain/subdomain-final.txt" | httprobe -s -p https:443 | tr -d ':443' > "$location/$domain/url-alive443.txt "
-cat "$location/$domain/subdomain-final.txt" | httprobe -s -p http:80 | tr -d ':80' > "$location/$domain/url-alive80.txt "
+cat "$location/$domain/subdomain-final.txt" | httprobe -s -p https:443 | sed 's/:443//g' > "$location/$domain/url-alive443.txt"
+cat "$location/$domain/subdomain-final.txt" | httprobe -s -p http:80 | sed 's/:80//g' > "$location/$domain/url-alive80.txt"
 
 #### Running gowitness against all compiled domains... ####
 

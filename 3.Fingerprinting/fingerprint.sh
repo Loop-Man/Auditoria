@@ -1,7 +1,7 @@
 #!/bin/bash
 #author		: Manuel López Torrecillas
 #description: Script para obtener información de manera activa del dominio elegido.
-#use: ./fingerprint.sh $domain
+#use: bash fingerprint.sh $domain
 
 #Colours
 greenColour="\e[0;32m\033[1m"
@@ -23,8 +23,17 @@ function ctrl_c(){
     exit 0
 }
 
+# Fijamos los parámetros de entrada del script a 1.
+let numarg=$(echo $#)
+let totalarg=1
+if [ $numarg -ne $totalarg ];then
+    echo -e "\n\t[*] Usage: bash fingerprint.sh www.example.com\n"
+    exit
+fi
+
 domain=$1
-topdomain="$(echo $domain | cut -d "." -f2-3)"
+#topdomain="$(echo $domain | cut -d "." -f2-3)"
+topdomain="$(echo $domain | awk -F'.' '{print $(NF-1)"."$NF}')"
 location="$(pwd)"
 
 if [ ! -d "$domain" ];then
@@ -74,8 +83,8 @@ whatweb https://$domain/ -v --follow-redirect=always --max-redirects=10 --aggres
 
 #### Fingerprint Web technology #####
 
-webtech -u http://$domain | tee -a $domain/webtechHTTP.txt
-webtech -u https://$domain | tee -a $domain/webtechHTTPS.txt
+#webtech -u http://$domain | tee -a $domain/webtechHTTP.txt
+#webtech -u https://$domain | tee -a $domain/webtechHTTPS.txt
 
 ### Probar todos los métodos HTTP ####
 
@@ -90,9 +99,9 @@ webtech -u https://$domain | tee -a $domain/webtechHTTPS.txt
 #cat crawler.txt |  parallel -j50 -q curl -x http://127.0.0.1:8080 -w 'Status:%{http_code}\t Size:%{size_download}\t %{url_effective}\n' -o /dev/null -sk
 
 #### Compruebo si el fichero tiene contenido y si es así lanza los crawlers #####
-if [ -s "../footprinting/$domain/waybackdataDomain.txt" ];then  
+if [ -s "../2.Footprinting/$domain/waybackdataDomain.txt" ];then  
 
-	for url in $(cat "../footprinting/$domain/waybackdataDomain.txt");do
+	for url in $(cat "../2.Footprinting/$domain/waybackdataDomain.txt");do
 
 		gospider -s "$url" -c 10 -d 10 >> $domain/crawler.tmp
 		hakrawler -url $domain -depth 300 -plain >> $domain/crawler.tmp
@@ -113,13 +122,3 @@ python3 /opt/ParamSpider/paramspider.py --domain $domain --exclude svg,jpg,css,j
 #### Cosas a realizar a mano #######
 
 echo -e "\n\n${yellowColour}[*]${endColour}${grayColour} Investigar código fuente de la página y de sus tecnologías usadas %${endColour}\n"
-
-
-
-
-
-
-
-
-
-

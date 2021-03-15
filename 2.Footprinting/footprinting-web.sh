@@ -1,7 +1,7 @@
 #!/bin/bash
 #author		: Manuel López Torrecillas
 #description: Script para recopilación de información pasiva del activo.
-#use: ./footprinting-web.sh $domain
+#use: bash footprinting-web.sh $domain
 
 #Colours
 greenColour="\e[0;32m\033[1m"
@@ -23,6 +23,14 @@ function ctrl_c(){
     echo -e "\n\n${yellowColour}[*]${endColour}${grayColour} Saliendo de manera controlada${endColour}\n"
     exit 1
 }
+
+# Fijamos los parámetros de entrada del script a 1.
+let numarg=$(echo $#)
+let totalarg=1
+if [ $numarg -ne $totalarg ];then
+    echo -e "\n\t[*] Usage: bash footprinting-web.sh www.example.com\n"
+    exit
+fi
 
 #Definimos variables globales del script
 domain=$1

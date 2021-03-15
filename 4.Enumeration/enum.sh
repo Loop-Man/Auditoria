@@ -1,7 +1,7 @@
 #!/bin/bash
 #author		: Manuel López Torrecillas
 #description: Script para enumeración inicial del activo.
-#use: ./enum.sh $domain
+#use: bash enum.sh $domain
 
 #Colours
 greenColour="\e[0;32m\033[1m"
@@ -22,6 +22,14 @@ function ctrl_c(){
     echo -e "\n\n${yellowColour}[*]${endColour}${grayColour} Saliendo de manera controlada${endColour}\n"
     exit 0
 }
+
+# Fijamos los parámetros de entrada del script a 1.
+let numarg=$(echo $#)
+let totalarg=1
+if [ $numarg -ne $totalarg ];then
+    echo -e "\n\t[*] Usage: bash enum.sh www.example.com\n"
+    exit
+fi
 
 domain=$1
 
@@ -49,5 +57,3 @@ wfuzz -c --hc=404 -Z -f wfuzzDirbuster.txt -z file,/usr/share/wordlists/dirbuste
 
 #wait
 echo "\n\n[*]Para cerrar todos los procesos en background usar kill %"
-
-

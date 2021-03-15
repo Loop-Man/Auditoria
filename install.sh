@@ -85,6 +85,11 @@ if [ ! -f "$GOPATH/bin/subjack" ]; then
 	go get github.com/haccer/subjack
 fi
 
+if [ ! -f "$GOPATH/bin/nuclei" ]; then
+	GO111MODULE=on go get -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei
+fi
+
+
 # Instalamos herramientas de github:
 
 if [ ! -d "/opt/Fast-Google-Dorks-Scan" ]; then

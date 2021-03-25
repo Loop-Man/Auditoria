@@ -84,6 +84,11 @@ dig @8.8.8.8 any $topdomain | tee -a "$domain/DNS/digGoogle-TopDomain.txt"
 if [ -z "$NS" ];then
 	dig @"$NS" $domain | tee -a "$domain/DNS/digNameServerTarget-Domain.txt"
 	dig @"$NS" any $topdomain | tee -a "$domain/DNS/digNameServerTarget-TopDomain.txt"
+	#Para obtener el banner del dns nameserver:
+	dig version.bind CHAOS TXT @"$NS" | tee -a "$domain/DNS/Banner-DNS-Nameserver.txt"
+	#Para probar transferencia de zona:
+	dig axfr $topdomain @"$NS" | tee -a "$domain/DNS/zone-transfer-with-domain.txt"
+	dig axfr @"$NS" | tee -a "$domain/DNS/zone-transfer-without-domain.txt"
 fi
 
 #Establecemos el estado original en la auditoria presente del target, por ip y por dominio. 

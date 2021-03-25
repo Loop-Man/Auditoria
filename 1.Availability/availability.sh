@@ -41,10 +41,13 @@ fi
 ping -c 1 $domain | tee -a $domain/ping.txt
 host -a $domain | tee -a $domain/host.txt
 dig @8.8.8.8 $domain | tee -a $domain/dig.txt
+dig @8.8.8.8 any $domain | tee -a $domain/dig-any.txt
 sudo nmap -sP -PE -PP -PM -PS80,443,22,445,139 -PA80,443,22,445,139 -PU35349,45232  --send-ip $domain | tee -a $domain/nmapAvailability.txt
 sudo nmap -Pn --reason -p 80,443 -sV -vvv $domain | tee -a $domain/nmapWeb.txt
-#sudo nmap -Pn --reason --open -p- -sS --min-rate 5000 -vvv $domain | tee -a $domain/nmapALLPORTS.txt
+sudo nmap -Pn --reason --open -sS -vvv $domain | tee -a $domain/nmapTopPorts.txt
 
-curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" http://$domain/ | tee -a $domain/curlHTTP.txt
+curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" http://$domain/ | tee -a $domain/curl-Domain-HTTP-onlyheaders.txt
+curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" https://$domain/ | tee -a $domain/curl-Domain-HTTPS-onlyheaders.txt
 
-curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" https://$domain/ | tee -a $domain/curlHTTPS.txt
+curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" http://$domain/ | tee -a $domain/curl-Domain-HTTP-Headers-Body.txt
+curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" https://$domain/ | tee -a $domain/curl-Domain-HTTPS-Headers-Body.txt

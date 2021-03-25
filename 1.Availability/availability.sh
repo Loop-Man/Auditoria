@@ -32,19 +32,61 @@ if [ $numarg -ne $totalarg ];then
     exit
 fi
 
-domain=$1
+# Creamos carpetas necesarias en caso de no existir
 
 if [ ! -d "$domain" ];then
 	mkdir $domain
 fi
+if [ ! -d "$domain/DNS" ];then
+	mkdir -p "$domain/DNS"
+fi
+if [ ! -d "$domain/Availability" ];then
+	mkdir -p "$domain/Availability"
+fi
+if [ ! -d "$domain/Domain-Status" ];then
+	mkdir -p "$domain/Domain-Status"
+fi
 
-ping -c 1 $domain | tee -a $domain/ping.txt
-host -a $domain | tee -a $domain/host.txt
-dig @8.8.8.8 $domain | tee -a $domain/dig.txt
-dig @8.8.8.8 any $domain | tee -a $domain/dig-any.txt
-sudo nmap -sP -PE -PP -PM -PS80,443,22,445,139 -PA80,443,22,445,139 -PU35349,45232  --send-ip $domain | tee -a $domain/nmapAvailability.txt
-sudo nmap -Pn --reason -p 80,443 -sV -vvv $domain | tee -a $domain/nmapWeb.txt
-sudo nmap -Pn --reason --open -sS -oA "$domain/nmapTopPorts" -vvv $domain
+# Declaramos variables del script
+domain=$1
+topdomain=$(echo $domain | awk -F'.' '{print $(NF-1)"."$NF}')
+NS=$(curl -s -k -i -XGET "https://sitereport.netcraft.com/?url=$domain" | grep -i -A1 ">Nameserver<" | xargs | cut -d '>' -f 4 | cut -d '<' -f 1)
+
+sudo cat /etc/hosts | grep $domain &>/dev/null
+if [ $? = 0 ];then
+	IP=$(sudo cat /etc/hosts | grep $domain | awk '{print $1}') 
+else
+	IP=$(sudo nmap -sP -PE -PP -PM -PS80,443,22,445,139 -PA80,443,22,445,139 -PU35349,45232 -oN "$domain/Availability/nmapAvailability.txt" --send-ip $domain | grep $domain | awk '{print $6}' | tr -d '(' | tr -d ')') 
+fi
+
+# Imprimimos las variables del script
+
+echo "Doamin is $domain"
+echo "Topdomain is $topdomain"
+echo "Nameserver is $NS"
+echo "IP is $IP"
+
+
+# Estudiamos la disponibilidad del activo
+ping -c 1 $domain | tee -a "$domain/Availability/ping.txt"
+sudo nmap -Pn --reason -p 80,443 -sV -vvv $domain | tee -a "$domain/Availability/nmapWeb.txt"
+sudo nmap -Pn --reason --open -sS -oA "$domain/Availability/nmapTopPorts" -vvv $domain
+
+
+# Estudiamos los registros DNS
+# Usando el nameserver del resolv.conf
+host $domain | tee -a "$domain/DNS/hostDomain.txt"
+host -a $topdomain | tee -a "$domain/DNS/hostTopDomain.txt"
+# Usando el nameserver de google 8.8.8.8
+dig @8.8.8.8 $domain | tee -a "$domain/DNS/digGoogle-Domain.txt"
+dig @8.8.8.8 any $topdomain | tee -a "$domain/DNS/digGoogle-TopDomain.txt"
+# Usando el nameserver del dominio a consultar
+if [ -z "$NS" ];then
+	dig @"$NS" $domain | tee -a "$domain/DNS/digNameServerTarget-Domain.txt"
+	dig @"$NS" any $topdomain | tee -a "$domain/DNS/digNameServerTarget-TopDomain.txt"
+fi
+
+#Establecemos el estado original en la auditoria presente del target
 
 curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" http://$domain/ | tee -a $domain/curl-Domain-HTTP-onlyheaders.txt
 curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" https://$domain/ | tee -a $domain/curl-Domain-HTTPS-onlyheaders.txt

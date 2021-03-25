@@ -40,7 +40,7 @@ fi
 
 ping -c 1 $domain | tee -a $domain/ping.txt
 host -a $domain | tee -a $domain/host.txt
-dig @8.8.8.8 any $domain | tee -a $domain/dig.txt
+dig @8.8.8.8 $domain | tee -a $domain/dig.txt
 sudo nmap -sP -PE -PP -PM -PS80,443,22,445,139 -PA80,443,22,445,139 -PU35349,45232  --send-ip $domain | tee -a $domain/nmapAvailability.txt
 sudo nmap -Pn --reason -p 80,443 -sV -vvv $domain | tee -a $domain/nmapWeb.txt
 #sudo nmap -Pn --reason --open -p- -sS --min-rate 5000 -vvv $domain | tee -a $domain/nmapALLPORTS.txt

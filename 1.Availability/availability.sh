@@ -61,10 +61,10 @@ fi
 
 # Imprimimos las variables del script
 
-echo "Doamin is $domain"
-echo "Topdomain is $topdomain"
-echo "Nameserver is $NS"
-echo "IP is $IP"
+echo "Doamin is $domain" | tee -a "$domain/.variables-scripts.debug"
+echo "Topdomain is $topdomain" | tee -a "$domain/.variables-scripts.debug
+echo "Nameserver is $NS" | tee -a "$domain/.variables-scripts.debug
+echo "IP is $IP" | tee -a "$domain/.variables-scripts.debug
 
 
 # Estudiamos la disponibilidad del activo
@@ -86,10 +86,17 @@ if [ -z "$NS" ];then
 	dig @"$NS" any $topdomain | tee -a "$domain/DNS/digNameServerTarget-TopDomain.txt"
 fi
 
-#Establecemos el estado original en la auditoria presente del target
+#Establecemos el estado original en la auditoria presente del target, por ip y por dominio. 
+#Ante futuros cambios en la web siempre podemos compararlos con la petición del momento de la auditoria.
 
-curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" http://$domain/ | tee -a $domain/curl-Domain-HTTP-onlyheaders.txt
-curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" https://$domain/ | tee -a $domain/curl-Domain-HTTPS-onlyheaders.txt
+curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" http://$domain/ | tee -a "$domain/Domain-Status/curl-Domain-HTTP-onlyheaders.txt"
+curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" https://$domain/ | tee -a "$domain/Domain-Status/curl-Domain-HTTPS-onlyheaders.txt"
 
-curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" http://$domain/ | tee -a $domain/curl-Domain-HTTP-Headers-Body.txt
-curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" https://$domain/ | tee -a $domain/curl-Domain-HTTPS-Headers-Body.txt
+curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" http://$domain/ | tee -a "$domain/Domain-Status/curl-Domain-HTTP-Headers-Body.txt"
+curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$1" https://$domain/ | tee -a "$domain/Domain-Status/curl-Domain-HTTPS-Headers-Body.txt"
+
+curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$IP" http://$IP/ | tee -a "$domain/Domain-Status/curl-IP-HTTP-onlyheaders.txt"
+curl -iXGET -k -I -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$IP" https://$IP/ | tee -a "$domain/Domain-Status/curl-IP-HTTPS-onlyheaders.txt"
+
+curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$IP" http://$IP/ | tee -a "$domain/Domain-Status/curl-IP-HTTP-Headers-Body.txt"
+curl -iXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$IP" https://$IP/ | tee -a "$domain/Domain-Status/curl-IP-HTTPS-Headers-Body.txt"

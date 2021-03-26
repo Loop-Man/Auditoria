@@ -2,6 +2,7 @@
 #author		: Manuel López Torrecillas
 #description: Script para obtener emails del dominio que le pasemos usando la api de hunter.io
 #use: bash hunter-email.sh <domain>
+#Obtener el dominio de la empresa del registro SOA del dns del dominio que estemos auditando.
 
 #Colours
 greenColour="\e[0;32m\033[1m"

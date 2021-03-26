@@ -46,4 +46,4 @@ fi
 
 # Peticiones a la API de hunter.io
 
-curl -s -i -XGET -k "https://api.hunter.io/v2/domain-search?domain=xunta.es&api_key=$API_KEY" | jq '.data.emails[] .value' | tr -d '"' > "emails/emails.txt"
+curl -s -i -XGET -k "https://api.hunter.io/v2/domain-search?domain=$domain&api_key=$API_KEY" | jq '.data.emails[] .value' | tr -d '"' > "emails-$domain/emails.txt"

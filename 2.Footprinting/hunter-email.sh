@@ -34,3 +34,16 @@ if [ $numarg -ne $totalarg ];then
 fi
 
 # Declaramos variables del script
+API_KEY=""
+domain=$1
+topdomain=$(echo $domain | awk -F'.' '{print $(NF-1)"."$NF}')
+
+# Crear carpeta contenedora de resultados
+
+if [ ! -d "emails" ];then
+	mkdir emails
+fi
+
+# Peticiones a la API de hunter.io
+
+curl -s -i -XGET -k "https://api.hunter.io/v2/domain-search?domain=xunta.es&api_key=$API_KEY" | jq '.data.emails[] .value' | tr -d '"' > "emails/emails.txt"

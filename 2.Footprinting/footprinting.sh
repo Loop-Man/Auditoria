@@ -229,10 +229,10 @@ fi
 
 ### Seguros ###
 
-assetfinder --subs-only $topdomain > "$location/$domain/subdomain.tmp"
-amass enum -d $topdomain >> "$location/$domain/subdomain.tmp"
-findomain-linux -q -t $topdomain >> "$location/$domain/subdomain.tmp"
-subfinder -d $topdomain --silent >> "$location/$domain/subdomain.tmp"
+assetfinder --subs-only $topdomain | tee -a "$location/$domain/subdomain.tmp"
+amass enum -passive -d $topdomain | tee -a "$location/$domain/subdomain.tmp"
+findomain-linux -q -t $topdomain | tee -a "$location/$domain/subdomain.tmp"
+subfinder -d $topdomain --silent | tee -a "$location/$domain/subdomain.tmp"
 curl -s "https://sonar.omnisint.io/subdomains/$topdomain" | jq '.[]' | tr -d '"' >> "$location/$domain/subdomain.tmp"
 curl -s "https://dns.bufferover.run/dns?q=$topdomain" | grep -i "\.$topdomain" | cut -d ',' -f2 | tr -d '"' | sort -u >> "$location/$domain/subdomain.tmp"
 cat "$location/$domain/waybackdataDomain.txt" | sed 's/\/\//\//g' | cut -d '/' -f 2 | cut -d ':' -f 1 | sort -u >> "$location/$domain/subdomain.tmp"
@@ -241,7 +241,7 @@ cat "$location/$domain/waybackdataDomain.txt" | sed 's/\/\//\//g' | cut -d '/' -
 cat "$location/$domain/subdomain.tmp" | grep -i $topdomain | sort -u >> "$location/$domain/subdomain.txt"
 #rm -rf "$location/$domain/subdomain.tmp"
 
-amass enum -v -src -ip -brute -d $topdomain >> "$location/$domain/subdomain-brute-force.txt"
+amass enum -v -src -ip -brute -d $topdomain | tee -a "$location/$domain/subdomain-brute-force.txt"
 cat "$location/$domain/subdomain-brute-force.txt" | cut -d ']' -f 2 | sed 's/  */ /g' | cut -d ' ' -f 2 | sort -u > "$location/$domain/subdomain-final.tmp"
 sort -u "$location/$domain/subdomain.txt" >> "$location/$domain/subdomain-final.tmp"
 sort -u "$location/$domain/subdomain-final.tmp" > "$location/$domain/subdomain-final.txt"

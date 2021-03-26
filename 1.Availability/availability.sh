@@ -62,9 +62,9 @@ fi
 # Imprimimos las variables del script
 
 echo "Doamin is $domain" | tee -a "$domain/.variables-scripts.debug"
-echo "Topdomain is $topdomain" | tee -a "$domain/.variables-scripts.debug
-echo "Nameserver is $NS" | tee -a "$domain/.variables-scripts.debug
-echo "IP is $IP" | tee -a "$domain/.variables-scripts.debug
+echo "Topdomain is $topdomain" | tee -a "$domain/.variables-scripts.debug"
+echo "Nameserver is $NS" | tee -a "$domain/.variables-scripts.debug"
+echo "IP is $IP" | tee -a "$domain/.variables-scripts.debug"
 
 
 # Estudiamos la disponibilidad del activo

@@ -83,7 +83,7 @@ host -a $topdomain | tee -a "$domain/DNS/hostTopDomain.txt"
 dig @8.8.8.8 $domain | tee -a "$domain/DNS/digGoogle-Domain.txt"
 dig @8.8.8.8 any $topdomain | tee -a "$domain/DNS/digGoogle-TopDomain.txt"
 # Usando el nameserver del dominio a consultar
-if [ -z "$NS" ];then
+if [ ! -z "$NS" ];then
 	dig @"$NS" $domain | tee -a "$domain/DNS/digNameServerTarget-Domain.txt"
 	dig @"$NS" any $topdomain | tee -a "$domain/DNS/digNameServerTarget-TopDomain.txt"
 	#Para obtener el banner del dns nameserver:

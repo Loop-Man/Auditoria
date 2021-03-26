@@ -34,9 +34,10 @@ if [ $numarg -ne $totalarg ];then
 fi
 
 # Declaramos variables del script
+#API KEY de hunter.io
 API_KEY=""
 if [ -z "$API_KEY" ];then
-	echo -e "\n\t[*] Error: NOT API_KEY FOUND\n"
+	echo -e "\n\t[*] Error: INSERT API_KEY in code\n"
 	exit
 fi
 domain=$1

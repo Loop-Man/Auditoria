@@ -37,13 +37,6 @@ domain=$1
 topdomain=$(echo $domain | awk -F'.' '{print $(NF-1)"."$NF}')
 NS=$(curl -s -k -i -XGET "https://sitereport.netcraft.com/?url=$domain" | grep -i -A1 ">Nameserver<" | xargs | cut -d '>' -f 4 | cut -d '<' -f 1)
 
-sudo cat /etc/hosts | grep $domain &>/dev/null
-if [ $? = 0 ];then
-	IP=$(sudo cat /etc/hosts | grep $domain | awk '{print $1}') 
-else
-	IP=$(sudo nmap -sP -PE -PP -PM -PS80,443,22,445,139 -PA80,443,22,445,139 -PU35349,45232 -oN "$domain/Availability/nmapAvailability.txt" --send-ip $domain | grep $domain | awk '{print $6}' | tr -d '(' | tr -d ')') 
-fi
-
 # Creamos carpetas necesarias en caso de no existir
 
 if [ ! -d "$domain" ];then
@@ -57,6 +50,15 @@ if [ ! -d "$domain/Availability" ];then
 fi
 if [ ! -d "$domain/Domain-Status" ];then
 	mkdir -p "$domain/Domain-Status"
+fi
+
+# Obtenemos la ip del dominio
+
+sudo cat /etc/hosts | grep $domain &>/dev/null
+if [ $? = 0 ];then
+	IP=$(sudo cat /etc/hosts | grep $domain | awk '{print $1}') 
+else
+	IP=$(sudo nmap -sP -PE -PP -PM -PS80,443,22,445,139 -PA80,443,22,445,139 -PU35349,45232 -oN "$domain/Availability/nmapAvailability.txt" --send-ip $domain | grep $domain | awk '{print $6}' | tr -d '(' | tr -d ')') 
 fi
 
 # Imprimimos las variables del script

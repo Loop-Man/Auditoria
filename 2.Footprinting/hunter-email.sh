@@ -34,6 +34,10 @@ fi
 
 # Declaramos variables del script
 API_KEY=""
+if [ ! -z "$API_KEY" ];then
+	echo -e "\n\t[*] Error: NOT API_KEY\n"
+	exit
+fi
 domain=$1
 topdomain=$(echo $domain | awk -F'.' '{print $(NF-1)"."$NF}')
 
@@ -45,4 +49,4 @@ fi
 
 # Peticiones a la API de hunter.io
 
-curl -s -XGET -k "https://api.hunter.io/v2/domain-search?domain=$domain&api_key=$API_KEY" | jq '.data.emails[] .value' | tr -d '"' > "emails-$domain/emails.txt"
+curl -s -XGET -k "https://api.hunter.io/v2/domain-search?domain=$topdomain&api_key=$API_KEY" | jq '.data.emails[] .value' | tr -d '"' > "emails-$domain/emails.txt"

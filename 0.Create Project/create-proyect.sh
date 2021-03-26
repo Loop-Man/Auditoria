@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 #author		: Manuel López Torrecillas
 #description: Script para usar al inicio de cualquier auditoria para crear los directorios correspondientes.
 #use: bash create-proyect.sh <domain>

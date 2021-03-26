@@ -34,8 +34,8 @@ fi
 
 # Declaramos variables del script
 API_KEY=""
-if [ ! -z "$API_KEY" ];then
-	echo -e "\n\t[*] Error: NOT API_KEY\n"
+if [ -z "$API_KEY" ];then
+	echo -e "\n\t[*] Error: NOT API_KEY FOUND\n"
 	exit
 fi
 domain=$1

@@ -51,6 +51,7 @@ cp $locationScripts/1.Availability/availability.sh $location/$(date +%m-%y)/$(da
 
 cp $locationScripts/2.Footprinting/footprinting-web.sh $location/$(date +%m-%y)/$(date +%d-%m-%y)_$domain/2.Footprinting/
 cp $locationScripts/2.Footprinting/footprinting.sh $location/$(date +%m-%y)/$(date +%d-%m-%y)_$domain/2.Footprinting/
+cp $locationScripts/2.Footprinting/hunter-email.sh $location/$(date +%m-%y)/$(date +%d-%m-%y)_$domain/2.Footprinting/
 
 cp $locationScripts/3.Fingerprinting/fingerprint.sh $location/$(date +%m-%y)/$(date +%d-%m-%y)_$domain/3.Fingerprinting/
 cp $locationScripts/3.Fingerprinting/nmap.sh $location/$(date +%m-%y)/$(date +%d-%m-%y)_$domain/3.Fingerprinting/

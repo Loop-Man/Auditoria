@@ -40,8 +40,8 @@ topdomain=$(echo $domain | awk -F'.' '{print $(NF-1)"."$NF}')
 
 # Crear carpeta contenedora de resultados
 
-if [ ! -d "emails" ];then
-	mkdir emails
+if [ ! -d "emails-$domain" ];then
+	mkdir "emails-$domain"
 fi
 
 # Peticiones a la API de hunter.io

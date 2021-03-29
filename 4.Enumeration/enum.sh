@@ -31,7 +31,13 @@ if [ $numarg -ne $totalarg ];then
     exit
 fi
 
+# Establecemos variables globales
 domain=$1
+
+# Creamos carpeta para almacenar los resultados
+if [ ! -d "$domain" ];then
+	mkdir $domain
+fi
 
 ### Actualizamos el repositorio de SecLists antes #####
 
@@ -44,16 +50,23 @@ sudo cp -r /opt/dirsearch/reports/$domain .
 
 ### Para proxies o reverse proxies ###
 
-wfuzz -c --hc=404 -Z -f reverse-proxy-inconsistencies.txt -z file,/opt/SecLists/Discovery/Web-Content/reverse-proxy-inconsistencies.txt https://$domain/FUZZ 2>/dev/null
-wfuzz -c --hc=404 -Z -f proxy-conf.fuzz.txt -z file,/opt/SecLists/Discovery/Web-Content/proxy-conf.fuzz.txt https://$domain/FUZZ 2>/dev/null
+cat /opt/SecLists/Discovery/Web-Content/reverse-proxy-inconsistencies.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+#wfuzz -c --hc=404 -Z -f reverse-proxy-inconsistencies.txt -z file,/opt/SecLists/Discovery/Web-Content/reverse-proxy-inconsistencies.txt https://$domain/FUZZ 2>/dev/null
+cat /opt/SecLists/Discovery/Web-Content/proxy-conf.fuzz.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+#wfuzz -c --hc=404 -Z -f proxy-conf.fuzz.txt -z file,/opt/SecLists/Discovery/Web-Content/proxy-conf.fuzz.txt https://$domain/FUZZ 2>/dev/null
 
 ### Vamos a enumerar con diccionarios comunes para una primera aproximación #####
 
-wfuzz -c --hc=404 -Z -f wfuzzLogins.txt -z file,/opt/SecLists/Discovery/Web-Content/Logins.fuzz.txt https://$domain/FUZZ 2>/dev/null
-wfuzz -c --hc=404 -Z -f wfuzzCommon.txt -z file,/usr/share/dirb/wordlists/common.txt https://$domain/FUZZ 2>/dev/null
-wfuzz -c --hc=404 -Z -f wfuzzBig.txt -z file,/usr/share/dirb/wordlists/big.txt https://$domain/FUZZ 2>/dev/null
-wfuzz -c --hc=404 -Z -f wfuzzRaft.txt -z file,/opt/SecLists/Discovery/Web-Content/raft-medium-directories.txt https://$domain/FUZZ 2>/dev/null
-wfuzz -c --hc=404 -Z -f wfuzzDirbuster.txt -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt https://$domain/FUZZ 2>/dev/null
+cat /opt/SecLists/Discovery/Web-Content/Logins.fuzz.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+#wfuzz -c --hc=404 -Z -f wfuzzLogins.txt -z file,/opt/SecLists/Discovery/Web-Content/Logins.fuzz.txt https://$domain/FUZZ 2>/dev/null
+cat /usr/share/dirb/wordlists/common.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+#wfuzz -c --hc=404 -Z -f wfuzzCommon.txt -z file,/usr/share/dirb/wordlists/common.txt https://$domain/FUZZ 2>/dev/null
+cat /usr/share/dirb/wordlists/big.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+#wfuzz -c --hc=404 -Z -f wfuzzBig.txt -z file,/usr/share/dirb/wordlists/big.txt https://$domain/FUZZ 2>/dev/null
+cat /opt/SecLists/Discovery/Web-Content/raft-medium-directories.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+#wfuzz -c --hc=404 -Z -f wfuzzRaft.txt -z file,/opt/SecLists/Discovery/Web-Content/raft-medium-directories.txt https://$domain/FUZZ 2>/dev/null
+cat /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ -od "./$domain/"
+#wfuzz -c --hc=404 -Z -f wfuzzDirbuster.txt -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt https://$domain/FUZZ 2>/dev/null
 
 #wait
 echo "\n\n[*]Para cerrar todos los procesos en background usar kill %"

@@ -47,7 +47,7 @@ wafw00f https://$domain | tee -a $domain/wafw00f.txt
 
 ###### Obtención del certificado usado por la página #####
 
-nmap -Pn --disable-arp -f --reason -p 443 -oN "$domain/nmapCertificate" -vvv --script ssl-cert $domain
+sudo nmap -Pn --disable-arp -f --reason -p 443 -oN "$domain/nmapCertificate" -vvv --script ssl-cert $domain
 
 ##### Cabeceras y conectividad HTTP y HTTPS #######
 
@@ -64,17 +64,17 @@ curl -IXGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) A
 
 #### Actualizar BBDD scripts de nmap ####
 
-nmap --script-updatedb
+sudo nmap --script-updatedb
 
 #### Fingerprint SO ######
 
-nmap -Pn -vvv --disable-arp --reason -f -D 104.83.26.43,200.61.38.216 --top-ports 5000 -sV -p- -O -oN "$domain/nmapSystemOperative" $domain
+sudo nmap -Pn -vvv --disable-arp --reason -f -D 104.83.26.43,200.61.38.216 --top-ports 5000 -sV -p- -O -oN "$domain/nmapSystemOperative" $domain
 
 #### Fingerprint WebServer ####
 
-## wget https://raw.githubusercontent.com/scipag/httprecon-nse/master/httprecon.nse -O /usr/share/nmap/scripts/
+sudo wget https://raw.githubusercontent.com/scipag/httprecon-nse/master/httprecon.nse -O /usr/share/nmap/scripts/httprecon.nse
 
-nmap -Pn --disable-arp -f --reason -p 443,80,8080 -oN "$domain/nmapWebServerFingerprint" -vvv -sV --script httprecon.nse $domain
+sudo nmap -Pn --disable-arp -f --reason -p 443,80,8080 -oN "$domain/nmapWebServerFingerprint" -vvv -sV --script httprecon.nse $domain
 
 #### Fingerprint Web Application  #####
 

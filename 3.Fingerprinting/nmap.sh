@@ -37,10 +37,10 @@ if [ ! -d "$domain" ];then
 	mkdir $domain
 fi
 
-nmap -Pn -vvv --disable-arp --reason -f -D 216.58.215.142 -sSV -O -sC -p 80,443 -oN "$domain/nmapDefault" $domain
-nmap -Pn -vvv --disable-arp --reason -f -D 216.58.215.142 -sSV -O -p 80,443 --script safe,version,vuln -oN "$domain/nmapSafe-Version-Vuln" $domain
-nmap -Pn -vvv --disable-arp --reason -f -D 216.58.215.142 -sSV -p 80,443 -oN "$domain/nmapFullHTTP" --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,"http-vuln*" $domain
+sudo nmap -Pn -vvv --disable-arp --reason -f -D 216.58.215.142 -sSV -O -sC -p 80,443 -oN "$domain/nmapDefault" $domain
+sudo nmap -Pn -vvv --disable-arp --reason -f -D 216.58.215.142 -sSV -O -p 80,443 --script safe,version,vuln -oN "$domain/nmapSafe-Version-Vuln" $domain
+sudo nmap -Pn -vvv --disable-arp --reason -f -D 216.58.215.142 -sSV -p 80,443 -oN "$domain/nmapFullHTTP" --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,"http-vuln*" $domain
 
-nmap -Pn -vvv --disable-arp --reason -f -sSV -p 80,443 --script http-slowloris-check -oN "$domain/nmapCheckSlowloris" $domain
-nmap -Pn -vvv --disable-arp --reason -f -sSV -p 443 --script ssl-cert -oN "$domain/nmapCertificate" $domain
-nmap -Pn -vvv --disable-arp --reason -f -sV --top-ports 10000 -O -oN "$domain/nmapSystemOperative" $domain
+sudo nmap -Pn -vvv --disable-arp --reason -f -sSV -p 80,443 --script http-slowloris-check -oN "$domain/nmapCheckSlowloris" $domain
+sudo nmap -Pn -vvv --disable-arp --reason -f -sSV -p 443 --script ssl-cert -oN "$domain/nmapCertificate" $domain
+sudo nmap -Pn -vvv --disable-arp --reason -f -sV --top-ports 10000 -O -oN "$domain/nmapSystemOperative" $domain

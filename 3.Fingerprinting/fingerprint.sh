@@ -99,25 +99,25 @@ whatweb https://$domain/ -v --follow-redirect=always --max-redirects=10 --aggres
 #cat crawler.txt |  parallel -j50 -q curl -x http://127.0.0.1:8080 -w 'Status:%{http_code}\t Size:%{size_download}\t %{url_effective}\n' -o /dev/null -sk
 
 #### Compruebo si el fichero tiene contenido y si es así lanza los crawlers #####
-if [ -s "../2.Footprinting/$domain/waybackdataDomain.txt" ];then  
-
-	for url in $(cat "../2.Footprinting/$domain/waybackdataDomain.txt");do
-
-		gospider -s "$url" -c 10 -d 10 >> $domain/crawler.tmp
-		hakrawler -url $domain -depth 300 -plain >> $domain/crawler.tmp
-		sort -u $domain/crawler.tmp | grep $domain >> $domain/crawler.tmp2
-		rm -rf $domain/crawler.tmp
-		
-	done
-sort -u $domain/crawler.tmp2 > $domain/crawler.txt
-rm -rf $domain/crawler.tmp*
-	
-fi
+#if [ -s "../2.Footprinting/$domain/waybackdataDomain.txt" ];then  
+#
+#	for url in $(cat "../2.Footprinting/$domain/waybackdataDomain.txt");do
+#
+#		gospider -s "$url" -c 10 -d 10 >> $domain/crawler.tmp
+#		hakrawler -url $domain -depth 300 -plain >> $domain/crawler.tmp
+#		sort -u $domain/crawler.tmp | grep $domain >> $domain/crawler.tmp2
+#		rm -rf $domain/crawler.tmp
+#		
+#	done
+#sort -u $domain/crawler.tmp2 > $domain/crawler.txt
+#rm -rf $domain/crawler.tmp*
+#	
+#fi
 
 
 ### ParamSpider ###
 
-python3 /opt/ParamSpider/paramspider.py --domain $domain --exclude svg,jpg,css,js --output "$domain/domainParam.txt"
+#python3 /opt/ParamSpider/paramspider.py --domain $domain --exclude svg,jpg,css,js --output "$domain/domainParam.txt"
 
 #### Cosas a realizar a mano #######
 

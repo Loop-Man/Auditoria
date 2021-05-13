@@ -50,22 +50,24 @@ sudo cp -r /opt/dirsearch/reports/$domain .
 
 ### Para proxies o reverse proxies ###
 
-cat /opt/SecLists/Discovery/Web-Content/reverse-proxy-inconsistencies.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+cat /opt/SecLists/Discovery/Web-Content/reverse-proxy-inconsistencies.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ | tee -a "$domain/ffuf-reverse-proxy-inconsistencies.txt"
 #wfuzz -c --hc=404 -Z -f reverse-proxy-inconsistencies.txt -z file,/opt/SecLists/Discovery/Web-Content/reverse-proxy-inconsistencies.txt https://$domain/FUZZ 2>/dev/null
-cat /opt/SecLists/Discovery/Web-Content/proxy-conf.fuzz.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+cat /opt/SecLists/Discovery/Web-Content/proxy-conf.fuzz.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ | tee -a "$domain/ffuf-proxy-conf.fuzz.txt"
 #wfuzz -c --hc=404 -Z -f proxy-conf.fuzz.txt -z file,/opt/SecLists/Discovery/Web-Content/proxy-conf.fuzz.txt https://$domain/FUZZ 2>/dev/null
 
 ### Vamos a enumerar con diccionarios comunes para una primera aproximación #####
 
-cat /opt/SecLists/Discovery/Web-Content/Logins.fuzz.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+cat /opt/SecLists/Discovery/Web-Content/Logins.fuzz.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ | tee -a "$domain/ffuf-Logins.fuzz.txt"
 #wfuzz -c --hc=404 -Z -f wfuzzLogins.txt -z file,/opt/SecLists/Discovery/Web-Content/Logins.fuzz.txt https://$domain/FUZZ 2>/dev/null
-cat /usr/share/dirb/wordlists/common.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+#yay -S wordlists
+cat /usr/share/wordlists/dirb/common.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ | tee -a "$domain/ffuf-common.txt"
 #wfuzz -c --hc=404 -Z -f wfuzzCommon.txt -z file,/usr/share/dirb/wordlists/common.txt https://$domain/FUZZ 2>/dev/null
-cat /usr/share/dirb/wordlists/big.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+cat /usr/share/wordlists/dirb/big.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ | tee -a "$domain/ffuf-big.txt"
 #wfuzz -c --hc=404 -Z -f wfuzzBig.txt -z file,/usr/share/dirb/wordlists/big.txt https://$domain/FUZZ 2>/dev/null
-cat /opt/SecLists/Discovery/Web-Content/raft-medium-directories.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ 
+cat /opt/SecLists/Discovery/Web-Content/raft-medium-directories.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ | tee -a "$domain/ffuf-raft-medium-directories.txt"
 #wfuzz -c --hc=404 -Z -f wfuzzRaft.txt -z file,/opt/SecLists/Discovery/Web-Content/raft-medium-directories.txt https://$domain/FUZZ 2>/dev/null
-cat /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ -od "./$domain/"
+#cat /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ -od "./$domain/"
+cat /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt | sed 's/^\#.*$//g' | sed '/^$/d' | ffuf -c -w -:FUZZ -u https://$domain/FUZZ | tee -a "$domain/ffuf-directory-list-2.3-medium.txt"
 #wfuzz -c --hc=404 -Z -f wfuzzDirbuster.txt -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt https://$domain/FUZZ 2>/dev/null
 
 #wait

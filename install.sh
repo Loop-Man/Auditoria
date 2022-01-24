@@ -30,9 +30,21 @@ function showhelp(){
 	exit 0
 }
 
-# Instalamos go, configuramos la variable de entorno $GOPATH y actualizamos los paquetes y dependencias de go.
+# Instalamos go, python, pip y configuramos la variable de entorno $GOPATH y actualizamos los paquetes y dependencias de go.
+which go &>/dev/null
+if [ $? != 0 ];then
+	sudo apt install golang -y &>/dev/null || sudo pacman -S --noconfirm --needed go &>/dev/null
+fi
 
-sudo apt install golang -y &>/dev/null || sudo pacman -S --noconfirm --needed go &>/dev/null
+which python2 &>/dev/null
+if [ $? != 0 ];then
+	sudo apt install python2 -y &>/dev/null
+fi
+
+which pip &>/dev/null
+if [ $? != 0 ];then
+	sudo apt install python3-pip -y &>/dev/null
+fi
 
 if [ ! -d "$HOME/go" ];then
 	mkdir "$HOME/go" &>/dev/null

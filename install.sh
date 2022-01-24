@@ -69,20 +69,19 @@ fi
 # Instalamos herramientas en go:
 
 if [ ! -f "$GOPATH/bin/gau" ]; then
-	go get -u -v github.com/lc/gau
+	go install github.com/lc/gau/v2/cmd/gau@latest
 fi
 
 if [ ! -f "$GOPATH/bin/assetfinder" ]; then
-	go get -u github.com/tomnomnom/assetfinder 
+	go get -u github.com/tomnomnom/assetfinder
 fi
 
 if [ ! -f "$GOPATH/bin/amass" ]; then
-	export GO111MODULE=on 
-    go get -v github.com/OWASP/Amass/v3/...
+	go install -v github.com/OWASP/Amass/v3/...@master
 fi
 
 if [ ! -f "$GOPATH/bin/subfinder" ]; then
-	GO111MODULE=on go get -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder
+	go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
 fi
 
 if [ ! -f "$GOPATH/bin/httprobe" ]; then
@@ -98,7 +97,7 @@ if [ ! -f "$GOPATH/bin/subjack" ]; then
 fi
 
 if [ ! -f "$GOPATH/bin/nuclei" ]; then
-	GO111MODULE=on go get -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei
+	go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 fi
 
 

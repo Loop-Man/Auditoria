@@ -121,12 +121,12 @@ else
 	sudo git -C /opt/subbrute/ pull 
 fi
 
-if [ ! -d "/opt/knock" ]; then
-	sudo git clone https://github.com/guelfoweb/knock /opt/knock/ 
-	sudo python2.7 /opt/knock/setup.py install
-else
-	sudo git -C /opt/knock/ pull
-fi
+#if [ ! -d "/opt/knock" ]; then
+#	sudo git clone https://github.com/guelfoweb/knock /opt/knock/ 
+#	sudo python2.7 /opt/knock/setup.py install
+#else
+#	sudo git -C /opt/knock/ pull
+#fi
 
 if [ ! -d "/opt/SecLists" ]; then
 	sudo git clone https://github.com/danielmiessler/SecLists.git /opt/SecLists/

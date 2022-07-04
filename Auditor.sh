@@ -109,8 +109,8 @@ fi
             dig version.bind CHAOS TXT @"$NS" | tee -a "$domain/1.DNS/Banner-DNS-Nameserver.txt"
             
             #Para probar transferencia de zona: Ojo de lanzarlo desde la vpn.
-            dig axfr $topdomain @"$NS" | tee -a "$domain/DNS/zone-transfer-with-domain.txt"
-            dig axfr @"$NS" | tee -a "$domain/DNS/zone-transfer-without-domain.txt"
+            dig axfr $topdomain @"$NS" | tee -a "$domain/1.DNS/zone-transfer-with-domain.txt"
+            dig axfr @"$NS" | tee -a "$domain/1.DNS/zone-transfer-without-domain.txt"
         fi
     fi
 

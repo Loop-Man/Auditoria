@@ -188,7 +188,7 @@ fi
         fi
 
         gau --retries 15 -subs -o "$location/$domain/4.Foot-Finger-printing/3.gauDomain.txt" $topdomain 
-        proxychains -q curl -s "http://web.archive.org/cdx/search/cdx?url=$topdomain/*&output=text&fl=original&collapse=urlkey" > "$location/$domain/4.Foot-Finger-printing/3.webarchiveDomain.txt" 
+        curl -s "http://web.archive.org/cdx/search/cdx?url=$topdomain/*&output=text&fl=original&collapse=urlkey" > "$location/$domain/4.Foot-Finger-printing/3.webarchiveDomain.txt" 
 
         cat "$location/$domain/4.Foot-Finger-printing/3.gauDomain.txt" | sort -u > "$location/$domain/4.Foot-Finger-printing/3.waybackdataDomain.tmp"
         cat "$location/$domain/4.Foot-Finger-printing/3.webarchiveDomain.txt" | sort -u >> "$location/$domain/4.Foot-Finger-printing/3.waybackdataDomain.tmp"
@@ -305,7 +305,7 @@ fi
         #sudo dirsearch -F --max-rate=5 -b --random-agent --proxy=localhost:8080 -r --deep-recursive --url https://$domain/ -e txt,php,xml,conf,zip,gz,tar.gz,sql --timeout=60 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
         #sudo dirsearch -F -b --random-agent --proxy=localhost:8080 --url https://$domain/ -e txt,php,xml,conf,zip,gz,tar.gz,sql --timeout=60 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
         sudo dirsearch -F -b --random-agent --url https://$domain/ -e txt,php,xml,conf,zip,gz,tar.gz,sql --timeout=40 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
-        #proxychains -q sudo dirsearch -F -b --random-agent --url https://$domain/ --timeout=40 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
+        #sudo dirsearch -F -b --random-agent --url https://$domain/ --timeout=40 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
 
     fi
 

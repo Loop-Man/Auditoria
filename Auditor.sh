@@ -39,7 +39,7 @@ domain=$1
 topdomain=$(echo $domain | awk -F'.' '{print $(NF-1)"."$NF}')
 #topdomain=$1
 location="$(pwd)"
-NS=$(proxychains -q curl -s -k -i -XGET "https://sitereport.netcraft.com/?url=$domain" | grep -i -A1 ">Nameserver<" | xargs | cut -d '>' -f 4 | cut -d '<' -f 1)
+NS=$(curl -s -k -i -XGET "https://sitereport.netcraft.com/?url=$domain" | grep -i -A1 ">Nameserver<" | xargs | cut -d '>' -f 4 | cut -d '<' -f 1)
     if [ -z "$NS" ];then
         NS="8.8.8.8"
     fi
@@ -50,7 +50,7 @@ sudo cat /etc/hosts | grep $domain &>/dev/null
     if [ $? = 0 ];then
         IP=$(sudo cat /etc/hosts | grep $domain | awk '{print $1}') 
     else
-        IP=$(proxychains -q sudo nmap -vvv -sn -PE -PP -PM -PS80,443,22,445,139,55 -PA80,443,22,445,139,55 -PU35349,45232 $domain 2>/dev/null | grep -m 1 $domain | awk '{print $3}' | tr -d '(' | tr -d ')') 
+        IP=$(sudo nmap -vvv -sn -PE -PP -PM -PS80,443,22,445,139,55 -PA80,443,22,445,139,55 -PU35349,45232 $domain 2>/dev/null | grep -m 1 $domain | awk '{print $3}' | tr -d '(' | tr -d ')') 
     fi
 
 # Create Folders
@@ -109,16 +109,16 @@ fi
             dig version.bind CHAOS TXT @"$NS" | tee -a "$domain/1.DNS/Banner-DNS-Nameserver.txt"
             
             #Para probar transferencia de zona: Ojo de lanzarlo desde la vpn.
-            #dig axfr $topdomain @"$NS" | tee -a "$domain/DNS/zone-transfer-with-domain.txt"
-            #dig axfr @"$NS" | tee -a "$domain/DNS/zone-transfer-without-domain.txt"
+            dig axfr $topdomain @"$NS" | tee -a "$domain/DNS/zone-transfer-with-domain.txt"
+            dig axfr @"$NS" | tee -a "$domain/DNS/zone-transfer-without-domain.txt"
         fi
     fi
 
 # 2. Availability
 
     if [ ! -f "$domain/2.Availability/ping.txt" ]; then
-        proxychains -q sudo nmap -Pn --reason -p 80,443 -sV -vvv $domain | tee -a "$domain/2.Availability/nmapWeb.txt"
-        proxychains -q sudo nmap -Pn --reason --open -sS -oN "$domain/2.Availability/nmapTopPorts" -vvv $domain
+        sudo nmap -Pn --reason -p 80,443 -sV -vvv $domain | tee -a "$domain/2.Availability/nmapWeb.txt"
+        sudo nmap -Pn --reason --open -sS -oN "$domain/2.Availability/nmapTopPorts" -vvv $domain
         ping -c 1 $domain | tee -a "$domain/2.Availability/ping.txt"
     fi
 
@@ -127,17 +127,17 @@ fi
 
     if [ ! -f "$domain/3.Domain-Status/curl-IP-withBody-HTTPS.txt" ]; then
 
-        curl -I -k -L -v --max-time 30 --connect-timeout 30 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-onlyheaders-HTTP.txt"
-        curl -I -k -L -v --max-time 30 --connect-timeout 30 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-onlyheaders-HTTPS.txt"
+        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-onlyheaders-HTTP.txt"
+        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-onlyheaders-HTTPS.txt"
 
-        curl -i -k -L -v --max-time 30 --connect-timeout 30 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-withBody-HTTP.txt"
-        curl -i -k -L -v --max-time 30 --connect-timeout 30 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-withBody-HTTPS.txt"
+        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-withBody-HTTP.txt"
+        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-withBody-HTTPS.txt"
 
-        curl -I -k -L -v --max-time 30 --connect-timeout 30 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-onlyheaders-HTTP.txt"
-        curl -I -k -L -v --max-time 30 --connect-timeout 30 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-onlyheaders-HTTPS.txt"
+        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-onlyheaders-HTTP.txt"
+        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-onlyheaders-HTTPS.txt"
 
-        curl -i -k -L -v --max-time 30 --connect-timeout 30 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-withBody-HTTP.txt"
-        curl -i -k -L -v --max-time 30 --connect-timeout 30 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-withBody-HTTPS.txt"
+        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-withBody-HTTP.txt"
+        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-withBody-HTTPS.txt"
       
     fi
 
@@ -246,10 +246,10 @@ fi
             GO111MODULE=on go get -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder
         fi
 
-        proxychains -q findomain-linux -q -t $topdomain | tee -a "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
-        proxychains -q subfinder -d $topdomain --silent | tee -a "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
-        proxychains -q curl --connect-timeout 60 -s "https://sonar.omnisint.io/subdomains/$topdomain" | jq '.[]' | tr -d '"' >> "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
-        proxychains -q curl --connect-timeout 60 -s "https://dns.bufferover.run/dns?q=$topdomain" | grep -i "\.$topdomain" | cut -d ',' -f2 | tr -d '"' | sort -u >> "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
+        findomain-linux -q -t $topdomain | tee -a "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
+        subfinder -d $topdomain --silent | tee -a "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
+        curl --connect-timeout 60 -s "https://sonar.omnisint.io/subdomains/$topdomain" | jq '.[]' | tr -d '"' >> "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
+        curl --connect-timeout 60 -s "https://dns.bufferover.run/dns?q=$topdomain" | grep -i "\.$topdomain" | cut -d ',' -f2 | tr -d '"' | sort -u >> "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
         cat "$location/$domain/4.Foot-Finger-printing/3.waybackdataDomain.txt" | sed 's/\/\//\//g' | cut -d '/' -f 2 | cut -d ':' -f 1 | sort -u >> "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
         cat "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp" | grep -i $topdomain | sort -u >> "$location/$domain/4.Foot-Finger-printing/4.subdomain.txt"
         rm -rf "$location/$domain/4.Foot-Finger-printing/4.subdomain.tmp"
@@ -279,22 +279,22 @@ fi
     ### 7.Certificate-HTTP_HEADERS-Robots-Sitemap ###
     
     if [ ! -f "$domain/4.Foot-Finger-printing/7.SitemapHTTPS.txt" ]; then
-        proxychains -q sudo nmap -Pn --disable-arp -f --reason -p 443 -oN "$domain/4.Foot-Finger-printing/7.Certificate-website" -vvv --script ssl-cert $domain
-        proxychains -q curl -I -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/ | tee -a $domain/4.Foot-Finger-printing/7.HTTP_HEADERS.txt
-        proxychains -q curl -I -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/ | tee -a $domain/4.Foot-Finger-printing/7.HTTPS_HEADERS.txt
-        proxychains -q curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/robots.txt | tee -a $domain/4.Foot-Finger-printing/7.RobotsHTTP.txt
-        proxychains -q curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/sitemap.xml | tee -a $domain/4.Foot-Finger-printing/7.SitemapHTTP.txt
-        proxychains -q curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/robots.txt | tee -a $domain/4.Foot-Finger-printing/7.RobotsHTTPS.txt
-        proxychains -q curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/sitemap.xml | tee -a $domain/4.Foot-Finger-printing/7.SitemapHTTPS.txt  
+        sudo nmap -Pn --disable-arp -f --reason -p 443 -oN "$domain/4.Foot-Finger-printing/7.Certificate-website" -vvv --script ssl-cert $domain
+        curl -I -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/ | tee -a $domain/4.Foot-Finger-printing/7.HTTP_HEADERS.txt
+        curl -I -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/ | tee -a $domain/4.Foot-Finger-printing/7.HTTPS_HEADERS.txt
+        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/robots.txt | tee -a $domain/4.Foot-Finger-printing/7.RobotsHTTP.txt
+        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/sitemap.xml | tee -a $domain/4.Foot-Finger-printing/7.SitemapHTTP.txt
+        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/robots.txt | tee -a $domain/4.Foot-Finger-printing/7.RobotsHTTPS.txt
+        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/sitemap.xml | tee -a $domain/4.Foot-Finger-printing/7.SitemapHTTPS.txt  
     fi
 
     ### 8.Fingerprint-SO-Webserver-Webapplication.
     
     if [ ! -f "$domain/4.Foot-Finger-printing/8.Fingerprint-Webapplication.txt" ]; then
         sudo nmap --script-updatedb
-        proxychains -q whatweb https://$domain/ -v --follow-redirect=always --open-timeout 120 --read-timeout 120 --max-redirects=30 --aggression=3 | tee -a "$domain/4.Foot-Finger-printing/8.Fingerprint-Webapplication.txt"
-        proxychains -q sudo nmap -Pn -vvv --disable-arp -f --reason -p 443,80,8080 -sV -oN "$domain/4.Foot-Finger-printing/8.Fingerprint-WebServer" $domain
-        #proxychains -q sudo nmap -Pn -vvv --disable-arp -f --reason -O -oN "$domain/4.Foot-Finger-printing/8.Fingerprint-SO" $domain
+        whatweb https://$domain/ -v --follow-redirect=always --open-timeout 120 --read-timeout 120 --max-redirects=30 --aggression=3 | tee -a "$domain/4.Foot-Finger-printing/8.Fingerprint-Webapplication.txt"
+        sudo nmap -Pn -vvv --disable-arp -f --reason -p 443,80,8080 -sV -oN "$domain/4.Foot-Finger-printing/8.Fingerprint-WebServer" $domain
+        #sudo nmap -Pn -vvv --disable-arp -f --reason -O -oN "$domain/4.Foot-Finger-printing/8.Fingerprint-SO" $domain
     fi
 
 #5.Enumeration
@@ -304,7 +304,7 @@ fi
         #sudo dirsearch -F --max-rate=5 -b --random-agent --proxy=localhost:8080 -r --deep-recursive --force-recursive --url https://$domain/ -e txt,php,xml,conf,zip,gz,tar.gz,sql --timeout=60 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
         #sudo dirsearch -F --max-rate=5 -b --random-agent --proxy=localhost:8080 -r --deep-recursive --url https://$domain/ -e txt,php,xml,conf,zip,gz,tar.gz,sql --timeout=60 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
         #sudo dirsearch -F -b --random-agent --proxy=localhost:8080 --url https://$domain/ -e txt,php,xml,conf,zip,gz,tar.gz,sql --timeout=60 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
-        proxychains -q sudo dirsearch -F -b --random-agent --url https://$domain/ -e txt,php,xml,conf,zip,gz,tar.gz,sql --timeout=40 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
+        sudo dirsearch -F -b --random-agent --url https://$domain/ -e txt,php,xml,conf,zip,gz,tar.gz,sql --timeout=40 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
         #proxychains -q sudo dirsearch -F -b --random-agent --url https://$domain/ --timeout=40 --max-rate=5 -o "$domain/5.Enumeration/dirsearch"
 
     fi
@@ -313,9 +313,9 @@ fi
 
     if [ ! -f "$domain/6.Infraestructure/3.nmapFullHTTP" ]; then
 
-        proxychains -q sudo nmap -Pn -sSV -f --top-ports 500 --script vulners -oN "$domain/6.Infraestructure/1.nmapVersion-CVE" $domain
-        proxychains -q sudo nmap -Pn -sSV -f -sC -p 80,443,8080 --script safe,version,vuln -oN "$domain/6.Infraestructure/2.nmapScript-Safe-Default-version-vuln" $domain
-        proxychains -q sudo nmap -Pn -vvv --disable-arp --reason -f -D 216.58.215.142 -sSV -p 80,443 -oN "$domain/6.Infraestructure/3.nmapFullHTTP" --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,"http-vuln*" $domain
+        sudo nmap -Pn -sSV -f --top-ports 500 --script vulners -oN "$domain/6.Infraestructure/1.nmapVersion-CVE" $domain
+        sudo nmap -Pn -sSV -f -sC -p 80,443,8080 --script safe,version,vuln -oN "$domain/6.Infraestructure/2.nmapScript-Safe-Default-version-vuln" $domain
+        sudo nmap -Pn -vvv --disable-arp --reason -f -D 216.58.215.142 -sSV -p 80,443 -oN "$domain/6.Infraestructure/3.nmapFullHTTP" --script http-backup-finder,http-config-backup,http-errors,http-headers,http-iis-webdav-vuln,http-internal-ip-disclosure,http-methods,http-php-version,http-qnap-nas-info,http-robots.txt,http-shellshock,http-slowloris-check,http-waf-detect,"http-vuln*" $domain
     
     fi
 
@@ -332,25 +332,25 @@ fi
 
         #nuclei -u https://$domain/ -t cves/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats -o "$domain/7.Webscan/1.Nuclei-CVE"
         #nuclei -u https://$domain/ -t cves/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats | tee "$domain/7.Webscan/1.Nuclei-CVE"
-        proxychains -q nuclei -u https://$domain/ -t cves/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/1.Nuclei-CVE"
+        nuclei -u https://$domain/ -t cves/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/1.Nuclei-CVE"
         #nuclei -u https://$domain/ -t vulnerabilities/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats -o "$domain/7.Webscan/2.Nuclei-Vulnerabilities"
         #nuclei -u https://$domain/ -t vulnerabilities/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats | tee "$domain/7.Webscan/2.Nuclei-Vulnerabilities"
-        proxychains -q nuclei -u https://$domain/ -t vulnerabilities/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/2.Nuclei-Vulnerabilities"
+        nuclei -u https://$domain/ -t vulnerabilities/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/2.Nuclei-Vulnerabilities"
         #nuclei -u https://$domain/ -t misconfiguration/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats -o "$domain/7.Webscan/3.Nuclei-Misconfiguration"
         #nuclei -u https://$domain/ -t misconfiguration/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats | tee "$domain/7.Webscan/3.Nuclei-Misconfiguration"
-        proxychains -q nuclei -u https://$domain/ -t misconfiguration/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/3.Nuclei-Misconfiguration"
+        nuclei -u https://$domain/ -t misconfiguration/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/3.Nuclei-Misconfiguration"
         #nuclei -u https://$domain/ -t exposed-panels/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats -o "$domain/7.Webscan/4.Nuclei-Exposed-panels"
         #nuclei -u https://$domain/ -t exposed-panels/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats | tee "$domain/7.Webscan/4.Nuclei-Exposed-panels"
-        proxychains -q nuclei -u https://$domain/ -t exposed-panels/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/4.Nuclei-Exposed-panels"
+        nuclei -u https://$domain/ -t exposed-panels/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/4.Nuclei-Exposed-panels"
         #nuclei -u https://$domain/ -t exposures/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats -o "$domain/7.Webscan/5.Nuclei-Exposures"
         #nuclei -u https://$domain/ -t exposures/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats | tee "$domain/7.Webscan/5.Nuclei-Exposures"
-        proxychains -q nuclei -u https://$domain/ -t exposures/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/5.Nuclei-Exposures"
+        nuclei -u https://$domain/ -t exposures/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/5.Nuclei-Exposures"
         #nuclei -u https://$domain/ -t default-logins/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats -o "$domain/7.Webscan/6.Nuclei-Default-logins"
         #nuclei -u https://$domain/ -t default-logins/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats | tee "$domain/7.Webscan/6.Nuclei-Default-logins"
-        proxychains -q nuclei -u https://$domain/ -t default-logins/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/6.Nuclei-Default-logins"
+        nuclei -u https://$domain/ -t default-logins/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/6.Nuclei-Default-logins"
         #nuclei -u https://$domain/ -t file/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats -o "$domain/7.Webscan/7.Nuclei-File"
         #nuclei -u https://$domain/ -t file/ -rl 5 -proxy http://127.0.0.1:8080 -timeout 90 -stats | tee "$domain/7.Webscan/7.Nuclei-File"
-        proxychains -q nuclei -u https://$domain/ -t file/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/7.Nuclei-File"
+        nuclei -u https://$domain/ -t file/ -rl 5 -timeout 90 -stats | tee "$domain/7.Webscan/7.Nuclei-File"
 
     fi
 
@@ -363,15 +363,15 @@ fi
                 
                 echo -e "${yellowColour}[*]${endColour}${grayColour} Introducir token de api de wordpress para mejores resultados % ${endColour}\n"
                 wpscan --update
-                proxychains -q wpscan --rua --throttle 200 --connect-timeout 60 --url https://$domain/ -v -o "$domain/7.Webscan/8.Wpscan-basic" -f cli --disable-tls-checks
-                proxychains -q wpscan --rua --throttle 200 --connect-timeout 60 --url https://$domain/ -v -o "$domain/7.Webscan/9.Wpscan-enumerate" -f cli --disable-tls-checks -e u,vp,vt
-                proxychains -q droopescan scan wordpress -u https://$domain | tee "$domain/7.Webscan/10.droopescan-wordpress"
+                wpscan --rua --throttle 200 --connect-timeout 60 --url https://$domain/ -v -o "$domain/7.Webscan/8.Wpscan-basic" -f cli --disable-tls-checks
+                wpscan --rua --throttle 200 --connect-timeout 60 --url https://$domain/ -v -o "$domain/7.Webscan/9.Wpscan-enumerate" -f cli --disable-tls-checks -e u,vp,vt
+                droopescan scan wordpress -u https://$domain | tee "$domain/7.Webscan/10.droopescan-wordpress"
             else
                 
                 wpscan --update
-                proxychains -q wpscan --rua --throttle 200 --connect-timeout 60 --url https://$domain/ -v -o "$domain/7.Webscan/8.Wpscan-basic" -f cli --disable-tls-checks --api-token $token_wordpress
-                proxychains -q wpscan --rua --throttle 200 --connect-timeout 60 --url https://$domain/ -v -o "$domain/7.Webscan/9.Wpscan-enumerate" -f cli --disable-tls-checks -e u,vp,vt --api-token $token_wordpress
-                proxychains -q droopescan scan wordpress -u https://$domain | tee "$domain/7.Webscan/10.droopescan-wordpress"
+                wpscan --rua --throttle 200 --connect-timeout 60 --url https://$domain/ -v -o "$domain/7.Webscan/8.Wpscan-basic" -f cli --disable-tls-checks --api-token $token_wordpress
+                wpscan --rua --throttle 200 --connect-timeout 60 --url https://$domain/ -v -o "$domain/7.Webscan/9.Wpscan-enumerate" -f cli --disable-tls-checks -e u,vp,vt --api-token $token_wordpress
+                droopescan scan wordpress -u https://$domain | tee "$domain/7.Webscan/10.droopescan-wordpress"
             fi    
         fi
     fi
@@ -379,7 +379,7 @@ fi
     if [ ! -f "$domain/7.Webscan/8.droopescan-moodle" ]; then
         cat $domain/4.Foot-Finger-printing/8.Fingerprint-Webapplication.txt | grep -i "moodle" &>/dev/null
         if [ $? = 0 ];then
-            proxychains -q droopescan scan moodle -u https://$domain | tee "$domain/7.Webscan/8.droopescan-moodle"
+            droopescan scan moodle -u https://$domain | tee "$domain/7.Webscan/8.droopescan-moodle"
         fi
     fi
 
@@ -387,7 +387,7 @@ fi
     if [ ! -f "$domain/7.Webscan/8.droopescan-drupal" ]; then
         cat $domain/4.Foot-Finger-printing/8.Fingerprint-Webapplication.txt | grep -i "drupal" &>/dev/null
         if [ $? = 0 ];then
-            proxychains -q droopescan scan drupal -u https://$domain | tee "$domain/7.Webscan/8.droopescan-drupal"
+            droopescan scan drupal -u https://$domain | tee "$domain/7.Webscan/8.droopescan-drupal"
         fi
     fi
 
@@ -395,7 +395,7 @@ fi
     if [ ! -f "$domain/7.Webscan/8.droopescan-joomla" ]; then
         cat $domain/4.Foot-Finger-printing/8.Fingerprint-Webapplication.txt | grep -i "joomla" &>/dev/null
         if [ $? = 0 ];then
-            proxychains -q droopescan scan joomla -u https://$domain | tee "$domain/7.Webscan/8.droopescan-joomla"
+            droopescan scan joomla -u https://$domain | tee "$domain/7.Webscan/8.droopescan-joomla"
         fi
     fi
 
@@ -403,7 +403,7 @@ fi
     if [ ! -f "$domain/7.Webscan/8.droopescan-silverstripe" ]; then
         cat $domain/4.Foot-Finger-printing/8.Fingerprint-Webapplication.txt | grep -i "silverstripe" &>/dev/null
         if [ $? = 0 ];then
-            proxychains -q droopescan scan silverstripe -u https://$domain | tee "$domain/7.Webscan/8.droopescan-silverstripe"
+            droopescan scan silverstripe -u https://$domain | tee "$domain/7.Webscan/8.droopescan-silverstripe"
         fi
     fi
 

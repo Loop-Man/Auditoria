@@ -127,17 +127,17 @@ fi
 
     if [ ! -f "$domain/3.Domain-Status/curl-IP-withBody-HTTPS.txt" ]; then
 
-        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-onlyheaders-HTTP.txt"
-        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-onlyheaders-HTTPS.txt"
+        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$domain/ >> "$domain/3.Domain-Status/curl-Domain-onlyheaders-HTTP.txt"
+        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$domain/ >> "$domain/3.Domain-Status/curl-Domain-onlyheaders-HTTPS.txt"
 
-        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-withBody-HTTP.txt"
-        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$domain/ | tee -a "$domain/3.Domain-Status/curl-Domain-withBody-HTTPS.txt"
+        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$domain/ >> "$domain/3.Domain-Status/curl-Domain-withBody-HTTP.txt"
+        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$domain/ >> "$domain/3.Domain-Status/curl-Domain-withBody-HTTPS.txt"
 
-        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-onlyheaders-HTTP.txt"
-        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-onlyheaders-HTTPS.txt"
+        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$IP/ >> "$domain/3.Domain-Status/curl-IP-onlyheaders-HTTP.txt"
+        curl -I -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$IP/ >> "$domain/3.Domain-Status/curl-IP-onlyheaders-HTTPS.txt"
 
-        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-withBody-HTTP.txt"
-        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$IP/ | tee -a "$domain/3.Domain-Status/curl-IP-withBody-HTTPS.txt"
+        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" http://$IP/ >> "$domain/3.Domain-Status/curl-IP-withBody-HTTP.txt"
+        curl -i -k -L -v --max-time 10 --connect-timeout 10 -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain/" https://$IP/ >> "$domain/3.Domain-Status/curl-IP-withBody-HTTPS.txt"
       
     fi
 
@@ -280,12 +280,12 @@ fi
     
     if [ ! -f "$domain/4.Foot-Finger-printing/7.SitemapHTTPS.txt" ]; then
         sudo nmap -Pn --disable-arp -f --reason -p 443 -oN "$domain/4.Foot-Finger-printing/7.Certificate-website" -vvv --script ssl-cert $domain
-        curl -I -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/ | tee -a $domain/4.Foot-Finger-printing/7.HTTP_HEADERS.txt
-        curl -I -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/ | tee -a $domain/4.Foot-Finger-printing/7.HTTPS_HEADERS.txt
-        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/robots.txt | tee -a $domain/4.Foot-Finger-printing/7.RobotsHTTP.txt
-        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/sitemap.xml | tee -a $domain/4.Foot-Finger-printing/7.SitemapHTTP.txt
-        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/robots.txt | tee -a $domain/4.Foot-Finger-printing/7.RobotsHTTPS.txt
-        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/sitemap.xml | tee -a $domain/4.Foot-Finger-printing/7.SitemapHTTPS.txt  
+        curl -I -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/ >> $domain/4.Foot-Finger-printing/7.HTTP_HEADERS.txt
+        curl -I -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/ >> $domain/4.Foot-Finger-printing/7.HTTPS_HEADERS.txt
+        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/robots.txt >> $domain/4.Foot-Finger-printing/7.RobotsHTTP.txt
+        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" http://$domain/sitemap.xml >> $domain/4.Foot-Finger-printing/7.SitemapHTTP.txt
+        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/robots.txt >> $domain/4.Foot-Finger-printing/7.RobotsHTTPS.txt
+        curl -i -XGET -k -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246" -H "Referer: https://$domain" https://$domain/sitemap.xml >> $domain/4.Foot-Finger-printing/7.SitemapHTTPS.txt  
     fi
 
     ### 8.Fingerprint-SO-Webserver-Webapplication.

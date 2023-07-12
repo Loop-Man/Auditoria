@@ -1,8 +1,7 @@
 #!/bin/bash
 #author		: Manuel López Torrecillas
-#description: Script para revisar rapidamente un dominio. Requiere tener proxychains para apuntar a caronte o al burp y que a su vez burp por socks5 lo mande a caronte.
 #use: bash Auditor.sh <domain>
-#Herramientas necesarias a tener instaladas: proxychains, nmap, go (con la variable de entorno configurada), wafw00f, whatweb, dirsearch, tor, droopescan.
+#Herramientas necesarias a tener instaladas:  nmap, go (con la variable de entorno configurada), wafw00f, whatweb, dirsearch, tor, droopescan.
 #Importante destacar que para dominios tipo domain.com.cu y similares introducir a mano la variable topdomain o habrá fases que seran muy largas porque buscaran subdominios de .com.co por ejemplo.
 
 #Colours

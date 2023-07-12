@@ -43,7 +43,7 @@ NS=$(proxychains -q curl -s -k -i -XGET "https://sitereport.netcraft.com/?url=$d
     if [ -z "$NS" ];then
         NS="8.8.8.8"
     fi
-token_wordpress="Nj9UskzaXskS29rOYPoqJeGNXak9Se4IWFzCFyOQXPw"
+token_wordpress=""
 
 # Obtenemos la ip del dominio
 sudo cat /etc/hosts | grep $domain &>/dev/null

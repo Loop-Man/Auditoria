@@ -86,50 +86,6 @@ fi
     echo "Nameserver is $NS" | tee -a "$domain/.variables-scripts.debug"
     echo "IP is $IP" | tee -a "$domain/.variables-scripts.debug"
 
-###### Abrimos la web por el camino normal ############
-if [ ! -f "$location/$domain/4.Foot-Finger-printing/contador" ]; then
-#    firefox --new-tab https://$domain/ &>/dev/null &
-
-###### Información del dominio via web ################
-#    firefox --new-tab https://sitereport.netcraft.com/?url=$domain &>/dev/null &
-#    sleep 2
-    firefox --new-tab https://sitereport.netcraft.com/?url=https://$domain &>/dev/null &
-    sleep 2
-    firefox --new-tab https://search.censys.io/search?resource=hosts&sort=RELEVANCE&per_page=25&virtual_hosts=EXCLUDE&q=$domain &>/dev/null &
-    sleep 2
-#    firefox --new-tab https://search.censys.io/search?resource=hosts&sort=RELEVANCE&per_page=25&virtual_hosts=EXCLUDE&q=$topdomain &>/dev/null &
-#    sleep 2
-    firefox --new-tab https://www.robtex.com/dns-lookup/$domain &>/dev/null &
-    sleep 2
-    firefox --new-tab https://www.virustotal.com/gui/domain/$domain/relations &>/dev/null &
-    sleep 2
-    firefox --new-tab https://www.shodan.io/search?query=$domain &>/dev/null &
-    sleep 2
-#    firefox --new-tab http://ipv4info.com/search/$domain &>/dev/null &
-#    sleep 2
-### Para buscar en Buscadores de dispositivos:
-#    firefox --new-tab https://www.shodan.io/search?query=ssl%3A+%22$domain%22 &>/dev/null &
-#    sleep 2
-#    firefox --new-tab https://www.zoomeye.org/searchResult?q=$domain &>/dev/null &
-#    sleep 2
-#    firefox --new-tab https://app.binaryedge.io/services/query?query=$domain&page=1 &>/dev/null &
-#    sleep 2
-#    firefox --new-tab https://fofa.so &>/dev/null &
-#    sleep 2
-##### Información del DNS ################
-#    firefox --new-tab https://securitytrails.com/domain/$domain/history/a &>/dev/null &
-#    sleep 2
-#     firefox --new-tab https://dnsspy.io/scan/$domain &>/dev/null &
-#    sleep 2
-    firefox --new-tab https://viewdns.info/iphistory/?domain=$domain &>/dev/null &
-    sleep 2
-#    firefox --new-tab https://viewdns.info/reverseip/?host=$domain&t=1 &>/dev/null &
-#    sleep 2
-#### Información de dominios de correos ######
-#    firefox --new-tab https://hunter.io/search/$domain &>/dev/null &
-#    sleep 2
-fi
-
 
 # 1. DNS
 
